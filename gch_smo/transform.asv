@@ -1,0 +1,12 @@
+function [ output_args ] = transform( input_args )
+
+uh=zeros(Nelm,elm_size);
+for ne=1:Nelm
+    for i=1:elm_size
+        uh(ne,i)=U((ne-1)*elm_s)
+    end
+end
+
+
+end
+

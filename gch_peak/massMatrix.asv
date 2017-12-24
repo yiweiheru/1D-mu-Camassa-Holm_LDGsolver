@@ -1,0 +1,38 @@
+function [ output_args ] = massMatrix( Ord,x,Nelm )
+
+elm_size=Ord+1;
+if Ord==1 || Ord==0
+    npt_quad=2;
+elseif Ord==2
+    npt_quad=3;
+elseif Ord==3
+    npt_quad=3;
+elseif Ord==4
+    npt_quad=4;
+end
+[qpt, qwt] = QuadLG(npt_quad);
+
+un=zeros(elm_size,npt_quad);
+mu_un=zeros(elm_size,1);
+for ik=1 : npt_quad
+    un(:,ik)=basis_1d(Ord,qpt(ik));
+    mu_un(:,1)=mu_un(:,1)+qwt(ik)*un(:,ik);
+end
+
+Mmat=zeros(elm_size,elm_size,Nelm);
+for ne=1:Nelm
+    Joca=(x(ne+1)-x(ne))/2;
+    for ik=1:npt_quad
+        for j=1:elm_size
+            for i=1:elm_size
+                Mmat(i,j,ne)=Mmat(i,j,ne)+qwt(ik)*un(i,ik)*un(j,ik)
+            end
+        end
+    end
+end
+
+
+
+
+end
+
