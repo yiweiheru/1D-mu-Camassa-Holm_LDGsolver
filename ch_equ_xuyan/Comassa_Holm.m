@@ -1,7 +1,7 @@
 clear
 close
 n_RK=3;
-Tfinal=0.1;
+Tfinal=10;
 ord_num=2;
 ir_num=6;
 period=50;
@@ -41,16 +41,16 @@ for Ord=1:ord_num
         UexcStore(1:lengthU,ir,Ord)=Uexc;
     end
 end
-
-[ L2error ] = L2err_discrete( UStore,UexcStore,ir_num,ord_num,period );
+% [ L2err ] = L2_error( Uh,Time,Ord,Nelm,x );
+% [ L2error ] = L2err_discrete( UStore,UexcStore,ir_num,ord_num,period );
 % [ LIerror ] = LIerr_discrete( UStore,UexcStore,ir_num,ord_num,period );
-for Ord=1:ord_num
+% for Ord=1:ord_num
 %     disp(ErrorOrder(L2error(Ord,:)));
-    disp(ErrorOrder(LIerror(Ord,:)));
-end
+% %     disp(ErrorOrder(L2err(Ord,:)));
+% end
 
-% figure(1)
-% plot_uh( U,Ord,Nelm,x,-period/2,period/2 )
-% [ U_final,R_final ] = getFinalExactSol( Nelm,elm_size,x,Time );
-% figure(2)
-% plot_uh( U_final,Ord,Nelm,x,-25,25 )
+figure(1)
+plot_uh( U,Ord,Nelm,x,-period/2,period/2 )
+[ U_final,R_final ] = getFinalExactSol( Nelm,elm_size,x,Time );
+figure(2)
+plot_uh( U_final,Ord,Nelm,x,-25,25 )

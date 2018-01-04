@@ -1,7 +1,7 @@
 close
 
 n_RK=4;
-Tfinal=0.5;
+Tfinal=1;
 ord_num=3;
 ir_num=5;
 cfl=0.1;

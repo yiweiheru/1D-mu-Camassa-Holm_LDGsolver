@@ -30,4 +30,4 @@ U=RKn( Ord,x,Nelm,U,Amat,massMat_inv,A1,n_RK,dtFinal,Time ,period);
 Time=Time+dtFinal;
 
 figure(1)
-% plot_uh( U,Ord,Nelm,x,-period/2,period/2 )
+ plot_uh( U,Ord,Nelm,x,-period/2,period/2 )

@@ -3,7 +3,7 @@ close
 n_RK=4;
 Tfinal=0.1;
 Ord=1;
-ir=1;
+ir=4;
 cfl=0.1;
 
 Nelm=10*2^(ir-1);
@@ -49,6 +49,6 @@ U = Amat\M;
 % hold on
 % Ut = Amat\Residue4;
 % U = U + Ut*dt;
-% plot_uh(M,Ord,Nelm,x,-period/2,period/2);
+plot_uh(M,Ord,Nelm,x,-period/2,period/2);
 hold on
 plot_uh(U,Ord,Nelm,x,-period/2,period/2);

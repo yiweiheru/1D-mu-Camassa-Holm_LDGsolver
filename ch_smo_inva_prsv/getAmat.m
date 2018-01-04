@@ -154,7 +154,7 @@ switch flux
         % the matrix between U and R: Rmat*U = R ( r-u_{x}=0 )
         Rmat = -massMat_inv*Pmat;
         % the matrix between U and M: Amat*U = M ( \mu(u)-u_{xx}=m )
-        Amat =  massMat_inv*mu_massMat - Rmat*Rmat;
+        Amat =  massMat_inv*massMat - Rmat*Rmat;
         
         
     case 2 % alternating flux
@@ -205,13 +205,13 @@ switch flux
         jsp3(it)=Nelm*elm_size;
         sdat3(it)=0;
         
-        Pumat = PriMat + sparse(isp3,jsp3,sdat3);
-        Prmat = PriMat + sparse(isp2,jsp2,sdat2);
+        Prmat = PriMat + sparse(isp3,jsp3,sdat3);
+        Pumat = PriMat + sparse(isp2,jsp2,sdat2);
         
         % the matrix between U and R: Rmat*U = R ( r-u_{x}=0 )
         Rmat = -massMat_inv*Pumat;
         % the matrix between U and M: Amat*U = M ( \mu(u)-u_{xx}=m )
-        Amat =  massMat_inv*mu_massMat + massMat_inv*Prmat*Rmat;
+        Amat =  massMat_inv*massMat + massMat_inv*Prmat*Rmat;
 end
 end
 
