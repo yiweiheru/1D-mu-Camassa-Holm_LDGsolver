@@ -1,8 +1,8 @@
-function [ Residue1 ] = residue1( x,Nelm,Ord,uh )
+function [ Residue1 ] = residue1( x,Nelm,Ord,uh,Time,period)
 
 elm_size=Ord+1;
 
-npt_quad=Ord+2;
+npt_quad=10;
 [qpt, qwt] = QuadLG(npt_quad);
 
 un=zeros(elm_size,npt_quad);
@@ -10,8 +10,8 @@ un_der=zeros(elm_size,npt_quad);
 uf=zeros(elm_size,2);
 
 for k = 1 : npt_quad
-    un(:,k)     = basis_1d(Ord,qpt(k));
-    un_der(:,k) = basisDer_1d(Ord,qpt(k));
+    un(:,k)      =basis_1d(Ord,qpt(k));
+    un_der(:,k)=basisDer_1d(Ord,qpt(k));
 end
 
 uf(:,1)=basis_1d(Ord,-1);
@@ -38,7 +38,6 @@ for ne=1:Nelm
 end
 
 for ne=1:Nelm
-    % Jaco=(x(ne+1)-x(ne))/2;
     for ik=1:npt_quad
         u=0;
         for j=1:elm_size
@@ -51,20 +50,26 @@ for ne=1:Nelm
     end  
 end
 
+XL=-period/2;
+XR=period/2;
 for ne=1:Nelm
-    uLp=0;uRp=0;
-    uLm=0;uRm=0;
-    for j=1:elm_size
-        uLp = uLp+uf(j,1)*uh(ne,j);            
-        uRp = uRp+uf(j,1)*uh(nei(ne,2),j);   
-        uLm = uLm+uf(j,2)*uh(nei(ne,1),j);
-        uRm = uRm+uf(j,2)*uh(ne,j);            
-    end
-    uhat_L = 1/2*(uLp+uLm);
-    uhat_R = 1/2*(uRp+uRm);
+%     
+%     if ne==1
+%         uLp=0.25*exp(XL-0.25*Time);
+%         uRp=uh(nei(ne,2),:)*uf(:,1);
+%     elseif ne==Nelm
+%         uLp=uh(ne,:)*uf(:,1);
+%         uRp=0.25*exp(-1*(XR-0.25*Time));
+%     else
+        uLp=uh(ne,:)*uf(:,1);
+        uRp=uh(nei(ne,2),:)*uf(:,1);
+%     end
+    
+    uhat_L=uLp;
+    uhat_R=uRp;
     
     for i=1:elm_size
-        num=(ne-1) * elm_size + i;
+        num=(ne-1)*elm_size+i;
         Flux_L(num)=Flux_L(num)+uf(i,1)*uhat_L;
         Flux_R(num)=Flux_R(num)+uf(i,2)*uhat_R;
     end

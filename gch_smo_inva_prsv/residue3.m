@@ -1,7 +1,9 @@
-function [ Residue3 ] = residue3( x,Nelm,Ord,uh,mh )
+function [ Residue3 ] = residue3( x,Nelm,Ord,U,M )
 
 elm_size=Ord+1;
-
+uh=uhTransform(Nelm,elm_size,U);
+mh=uhTransform(Nelm,elm_size,M);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 npt_quad=Ord+2;
 [qpt, qwt] = QuadLG(npt_quad);
 
@@ -11,7 +13,7 @@ for k = 1 : npt_quad
     un(:,k)     = basis_1d(Ord,qpt(k));
     un_der(:,k) = basisDer_1d(Ord,qpt(k));
 end
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Residue3=zeros(Nelm*elm_size,1);
 Intergral=zeros(Nelm*elm_size,1);
 
@@ -30,7 +32,7 @@ for ne=1:Nelm
         end
     end
 end
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Residue3=Residue3-Intergral;
 
 end

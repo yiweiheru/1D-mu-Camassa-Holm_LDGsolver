@@ -1,7 +1,7 @@
-function [ l2error ] = L2err_discrete( UStore,UexcStore,ir_num,ord_num,period )
+function [ lIerror ] = LIerr_discrete( UStore,UexcStore,ir_num,ord_num,period )
 
 
-l2error=zeros(ord_num,ir_num);
+lIerror=zeros(ord_num,ir_num);
 for Ord=1:ord_num
     for ir=1:ir_num
         Nelm=10*2^(ir-1);
@@ -28,17 +28,16 @@ for Ord=1:ord_num
         end
         Du=evalU-evalUexc;
         val=0;
-        NP=0;
+
         for ne=1:Nelm
             for i=1:num_pt+1
 %                 if (xk(ne,i)<=-5 && xk(ne,i)>=-25) || (xk(ne,i)>=5 && xk(ne,i)<=25)
                 if ~(xk(ne,i)>=-4 && xk(ne,i)<=4)
-                    val=val+(Du(ne,i))^2;
-                    NP=NP+1;
+                    val=max(val,abs(Du(ne,i)));
                 end
             end
         end
-        l2error(Ord,ir)=sqrt(val/NP);
+        lIerror(Ord,ir)=val;
         
     end
 end

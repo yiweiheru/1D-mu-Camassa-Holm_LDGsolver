@@ -1,4 +1,4 @@
-function [ Val ] = evalue_uh( Ord,Nelm,x,uh,x0 )
+function Val= evalue_uh( Ord,Nelm,x,uh,x0 )
 
 for ne=1:Nelm
     if x0>=x(ne) && x0<x(ne+1)

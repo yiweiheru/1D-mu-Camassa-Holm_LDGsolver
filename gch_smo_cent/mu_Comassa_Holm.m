@@ -13,6 +13,9 @@ L2_OrderStore=zeros(ord_num,ir_num-1);
 LInf_OrderStore=zeros(ord_num,ir_num-1);
 muH1_OrderStore=zeros(ord_num,ir_num-1);
 
+global orr
+orr = 1; % flux of f(u):1 is central; 2 is LF.
+
 for Ord=1:ord_num
     for ir=1:ir_num
         

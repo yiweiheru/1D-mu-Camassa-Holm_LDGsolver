@@ -22,12 +22,11 @@ for np=1:Nelm*(Ord+1)
 end
 
 if Ord==1 
-plot(x_to_plot,uh_to_plot,'-r')
+plot(x_to_plot,uh_to_plot,'-*r')
 else
-plot(x_to_plot,uh_to_plot,'-k')
+plot(x_to_plot,uh_to_plot,'-ok')
 end
 
 
 end
-
 

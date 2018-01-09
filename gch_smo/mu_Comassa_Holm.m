@@ -1,11 +1,9 @@
-close
 
 n_RK=4;
-Tfinal=1;
-ord_num=3;
-ir_num=5;
+Tfinal=10;
+ord_num=2;
+ir_num=4;
 cfl=0.1;
-
 
 L2_ErrorStore=zeros(ord_num,ir_num);
 LInf_ErrorStore=zeros(ord_num,ir_num);
@@ -14,9 +12,11 @@ L2_OrderStore=zeros(ord_num,ir_num-1);
 LInf_OrderStore=zeros(ord_num,ir_num-1);
 muH1_OrderStore=zeros(ord_num,ir_num-1);
 
+global orr
+orr = 1;%flux of f(u):1 is central;2 is LF
+
 for Ord=1:ord_num
-    for ir=1:ir_num
-        
+    for ir=1:ir_num       
         Nelm=10*2^(ir-1);
         dx=period/Nelm;
 
@@ -28,18 +28,19 @@ for Ord=1:ord_num
         U0 = setInitial(Nelm,elm_size,x,Xexc,uexc);
         [ Amat,massMat_inv ] = getAmat( Ord,Nelm,x );
         U=U0;
-        
         Time=0;
-        for nt=1:Tsteps-1
+
+        for nt=1:Tsteps
+            if nt == Tsteps
+               dt = Tfinal - Time;
+            end
+               
             U=RKn( Ord,x,Nelm,U,Amat,massMat_inv,n_RK,dt);
+            R = getuh_Der( Ord,x,Nelm,U,massMat_inv );
             Time=Time+dt;
         end
-        dtFinal = Tfinal-Time;
-        U = RKn( Ord,x,Nelm,U,Amat,massMat_inv,n_RK,dtFinal );
-        Time = Time+dtFinal;
-        
-        R = getuh_Der( Ord,x,Nelm,U,massMat_inv );
 
+        
         L2_ErrorStore(Ord,ir)= L2_error( U,Time,Ord,Nelm,x,Xexc,uexc,rexc,period,c);
         LInf_ErrorStore(Ord,ir)= LInf_error( U,Time,Ord,Nelm,x,Xexc,uexc,rexc,period,c);
         muH1_ErrorStore(Ord,ir)= mu_H1_error( U,R,Time,Ord,Nelm,x,Xexc,uexc,rexc,period,c );
@@ -52,6 +53,7 @@ for Ord=1:ord_num
 
 end
 
+
 format short
 disp(L2_OrderStore)
 disp(LInf_OrderStore)
@@ -61,7 +63,23 @@ format shortE
 disp(L2_ErrorStore)
 disp(LInf_ErrorStore)
 disp(muH1_ErrorStore)
-% 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 % figure(1)
 % plot_uh(U,Ord,Nelm,x,-period/2,period/2);
 % grid on

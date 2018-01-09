@@ -93,7 +93,7 @@ for ne=1:Nelm
     end
         
     global orr
-    orr = 2;%1:center; 2:LF
+%     orr = 2;%1:center; 2:LF
     if orr == 1
     fhat_L=0.5*(2*uLm+2*uLp)*mu_uh;
     fhat_R=0.5*(2*uRm+2*uRp)*mu_uh;

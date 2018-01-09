@@ -1,24 +1,21 @@
-function [ Mmat,Pmat,mu_Mmat,Flmat,M_inv ] = Mat_sys( Ord,x,Nelm )
-%    In this projection of DP equation, we choose a simple way
-%    to handle the mass matrix via using uniform mesh.
-%    1 represent Left, 2 represent Right
+function [ Mmat,Pmat,mu_Mmat,M_inv,FLPmat,FLMmat,FRPmat,FRMmat ] = Mat_sys( Ord,x,Nelm )
 
 elm_size = Ord+1;
 npt_quad = Ord+2;
 [qpt, qwt] = QuadLG( npt_quad );
 
-un = zeros( elm_size,npt_quad );
-un_der = zeros( elm_size,npt_quad );
-mu_un = zeros( elm_size,1 );
+un=zeros(elm_size,npt_quad);
+un_der=zeros(elm_size,npt_quad);
+mu_un=zeros(elm_size,1);
 for k=1 : npt_quad
-    un(:,k)        = basis_1d( Ord,qpt(k) );
-    un_der(:,k) = basisDer_1d( Ord,qpt(k) );
-    mu_un(:,1) = mu_un(:,1) + qwt(k)*un(:,k);
+    un(:,k)=basis_1d(Ord,qpt(k));
+    un_der(:,k)=basisDer_1d(Ord,qpt(k));
+    mu_un(:,1)=mu_un(:,1)+qwt(k)*un(:,k);
 end
 
-Mmat = zeros(elm_size,elm_size,Nelm);
-Pmat = zeros(elm_size,elm_size,Nelm);
-mu_Mmat = zeros(elm_size,elm_size,Nelm,Nelm);
+Mmat=zeros(elm_size,elm_size,Nelm);
+Pmat=zeros(elm_size,elm_size,Nelm);
+mu_Mmat=zeros(elm_size,elm_size,Nelm,Nelm);
 
 for ne=1:Nelm
     Joca=(x(ne+1)-x(ne))/2;
@@ -32,7 +29,7 @@ for ne=1:Nelm
     end
 end
 
-%to avoid the bad condition number,we compute the inv_massMat
+% inv_massMat
 M0mat=zeros(elm_size,elm_size);
 for k=1:npt_quad
     for j=1:elm_size
@@ -43,6 +40,7 @@ for k=1:npt_quad
 end
 M_inv=inv(M0mat);
 
+% mu_mass matrix
 for neI=1:Nelm
     Joca1=(x(neI+1)-x(neI))/2;
     for neJ=1:Nelm
@@ -55,21 +53,29 @@ for neI=1:Nelm
     end
 end
 
+% Matrix fomulated by the numerical flux, they are different from the
+% choice of the flux
+
 uf=zeros(elm_size,2);
 uf(:,1)=basis_1d(Ord,-1);
 uf(:,2)=basis_1d(Ord,1);
 
-Flmat = zeros( elm_size,elm_size,2,2,Nelm );
+FLPmat=zeros(elm_size,elm_size,Nelm);
+FLMmat=zeros(elm_size,elm_size,Nelm);
+FRPmat=zeros(elm_size,elm_size,Nelm);
+FRMmat=zeros(elm_size,elm_size,Nelm);
 
-for ne = 1:Nelm
-    for j = 1:elm_size
-        for i = 1:elm_size
-            Flmat(i,j,1,1,ne) = uf(i,1)*uf(j,1);
-            Flmat(i,j,1,2,ne) = uf(i,1)*uf(j,2);
-            Flmat(i,j,2,1,ne) = uf(i,2)*uf(j,1);
-            Flmat(i,j,2,2,ne) = uf(i,2)*uf(j,2);
+for ne=1:Nelm
+    for j=1:elm_size
+        for i=1:elm_size
+            FLPmat(i,j,ne)=uf(i,1)*uf(j,1);
+            FRPmat(i,j,2,ne)=uf(i,2)*uf(j,1);
+            
+            FLMmat(i,j,1,ne)=uf(i,1)*uf(j,2);
+            FRMmat(i,j,2,ne)=uf(i,2)*uf(j,2);
         end
     end
 end
 
 end
+

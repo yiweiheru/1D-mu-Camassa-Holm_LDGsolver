@@ -1,11 +1,14 @@
 close
 
-n_RK=3;
-Tfinal=1;
-ord_num=4;
-ir_num=3;
+n_RK=4;
+Tfinal=0.5;
+ord_num=3;
+ir_num=5;
 cfl=0.1;
 
+% 1 is Alternating; 2 is Central. Here
+global type_of_flux
+type_of_flux = 1;
 
 L2_ErrorStore=zeros(ord_num,ir_num);
 LInf_ErrorStore=zeros(ord_num,ir_num);
@@ -26,19 +29,18 @@ for Ord=1:ord_num
         x=-period/2:dx:period/2;
         elm_size=Ord+1;
         U0 = setInitial(Nelm,elm_size,x,Xexc,uexc);
-        [ Amat,massMat_inv,Rmat,massMat ] = getAmat( Ord,Nelm,x );
+        [ Amat,Dumat,massMat,massMat_inv ] = getAmat( Ord,Nelm,x );
         U=U0;
         
         Time=0;
-        for nt=1:Tsteps-1
-            U=RKn( x,Ord,Nelm,U,Amat,massMat_inv,Rmat,massMat,n_RK,dt );
+        for nt=1:Tsteps
+            if nt == Tsteps
+                dt = Tfinal - Time;
+            end
+            U = RKn( x,Ord,Nelm,U,Amat,massMat_inv,Dumat,massMat,n_RK,dt );
             Time=Time+dt;
         end
-        dtFinal = Tfinal-Time;
-        U = RKn( x,Ord,Nelm,U,Amat,massMat_inv,Rmat,massMat,n_RK,dtFinal );
-        Time = Time+dtFinal;
-        
-        R = Rmat*U;
+        R = Dumat*U;
 
         L2_ErrorStore(Ord,ir)= L2_error( U,Time,Ord,Nelm,x,Xexc,uexc,rexc,period,c);
         LInf_ErrorStore(Ord,ir)= LInf_error( U,Time,Ord,Nelm,x,Xexc,uexc,rexc,period,c);
@@ -61,8 +63,10 @@ format shortE
 disp(L2_ErrorStore)
 disp(LInf_ErrorStore)
 disp(muH1_ErrorStore)
-figure(1)
-plot_uh(U,Ord,Nelm,x,-period/2,period/2);
+
+
+% figure(1)
+% plot_uh(U,Ord,Nelm,x,-period/2,period/2);
 % grid on
 % 
 % figure(2)
@@ -71,9 +75,9 @@ plot_uh(U,Ord,Nelm,x,-period/2,period/2);
 % R0 = getuh_Der( Ord,x,Nelm,U0,massMat_inv );
 % plot_uh(R0,Ord,Nelm,x,-period/2,period/2);
 % % grid on
- [ U_final,R_final ] =getFinalExactSol( Nelm,elm_size,x,Time,Xexc,uexc,rexc ,period,c);
- figure(3)
- plot_uh(U_final,Ord,Nelm,x,-period/2,period/2);
+%  [ U_final,R_final ] =getFinalExactSol( Nelm,elm_size,x,Time,Xexc,uexc,rexc ,period,c);
+%  figure(3)
+%  plot_uh(U_final,Ord,Nelm,x,-period/2,period/2);
 % % hold on
 % plot_uh(R,Ord,Nelm,x,-period/2,period/2);
 % plot_uh(U1,Ord,Nelm,x,-period/2,period/2);
