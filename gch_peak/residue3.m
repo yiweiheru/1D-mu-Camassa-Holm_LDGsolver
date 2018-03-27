@@ -1,4 +1,4 @@
-function [ Residue3 ] = residue3( x,Nelm,Ord,uh,rh,ph,Time )
+function [ Residue3 ] = residue3( x,Nelm,Ord,uh,rh,ph,Time,flux_f )
 
 elm_size=Ord+1;
 
@@ -69,29 +69,6 @@ end
 
 
 for ne=1:Nelm
-%     if ne==1
-%         uLp=1/26*(12*(0.5-Time)^2+23);
-%         uLm=uLp;
-%         uRp=uh(nei(ne,2),:)*uf(:,1);
-%         uRm=uh(ne,:)*uf(:,2);
-%         
-%         rLm=12/13*(0.5-Time);
-%         rRm=rh(ne,:)*uf(:,2);
-%         
-%         pLm=12/13*uLm+rLm*rLm;
-%         pRm=ph(ne,:)*uf(:,2);
-%     elseif ne==Nelm
-%         uLp=uh(ne,:)*uf(:,1);
-%         uLm=uh(nei(ne,1),:)*uf(:,2);
-%         uRp=1/26*(12*(0.5-Time)^2+23);
-%         uRm=uRp;
-%         
-%         rLm=rh(nei(ne,1),:)*uf(:,2);
-%         rRm=12/13*(0.5-Time);
-%         
-%         pLm=ph(nei(ne,1),:)*uf(:,2);
-%         pRm=12/13*uRm+rRm*rRm;
-%     else
         uLp=uh(ne,:)*uf(:,1);                   
         uLm=uh(nei(ne,1),:)*uf(:,2);
         uRp=uh(nei(ne,2),:)*uf(:,1);          
@@ -102,11 +79,13 @@ for ne=1:Nelm
         
         pLm=ph(nei(ne,1),:)*uf(:,2);
         pRm=ph(ne,:)*uf(:,2);
-%     end
-    
-    fhat_L=0.5*(2*(uLm+uLp)*mu_uh-2*(uLp-uLm)*abs(mu_uh));
-    fhat_R=0.5*(2*(uRm+uRp)*mu_uh-2*(uRp-uRm)*abs(mu_uh));
-    
+    if flux_f == 'Dsp'
+        fhat_L = 0.5*(2*(uLm+uLp)*mu_uh-2*(uLp-uLm)*abs(mu_uh));
+        fhat_R = 0.5*(2*(uRm+uRp)*mu_uh-2*(uRp-uRm)*abs(mu_uh));
+    elseif flux_f == 'Csv'
+        fhat_L = 0.5*mu_uh*(2*uLm+2*uLp);
+        fhat_R = 0.5*mu_uh*(2*uRm+2*uRp);
+    end
     phat_L=pLm;
     phat_R=pRm;
     

@@ -1,8 +1,8 @@
 
 n_RK=4;
-Tfinal=10;
-ord_num=2;
-ir_num=4;
+Tfinal=0.5;
+ord_num=3;
+ir_num=5;
 cfl=0.1;
 
 L2_ErrorStore=zeros(ord_num,ir_num);
@@ -56,22 +56,11 @@ end
 
 format short
 disp(L2_OrderStore)
-disp(LInf_OrderStore)
 disp(muH1_OrderStore)
 
 format shortE
 disp(L2_ErrorStore)
-disp(LInf_ErrorStore)
 disp(muH1_ErrorStore)
-
-
-
-
-
-
-
-
-
 
 
 
@@ -94,3 +83,11 @@ disp(muH1_ErrorStore)
 % figure(3)
 % % hold on
 % plot_uh(R_final,Ord,Nelm,x,-period/2,period/2);
+
+
+
+
+
+
+
+

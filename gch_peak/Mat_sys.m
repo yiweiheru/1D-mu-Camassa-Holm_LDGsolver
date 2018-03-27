@@ -1,22 +1,25 @@
-function [ Mmat,Pmat,mu_Mmat,UFmat,RFmat,M_inv ] = Mat_sys( Ord,x,Nelm )
+function [ Mmat,Pmat,mu_Mmat,Fmat,M_inv ] = Mat_sys( Ord,x,Nelm )
+%    In this projection of DP equation, we choose a simple way
+%    to handle the mass matrix via using uniform mesh.
 
-elm_size=Ord+1;
+%    1 represent Left, 2 represent Right
 
-npt_quad=Ord+2;
-[qpt, qwt] = QuadLG(npt_quad);
+elm_size = Ord+1;
+npt_quad = Ord+2;
+[qpt, qwt] = QuadLG( npt_quad );
 
-un=zeros(elm_size,npt_quad);
-un_der=zeros(elm_size,npt_quad);
-mu_un=zeros(elm_size,1);
+un = zeros( elm_size,npt_quad );
+un_der = zeros( elm_size,npt_quad );
+mu_un = zeros( elm_size,1 );
 for k=1 : npt_quad
-    un(:,k)=basis_1d(Ord,qpt(k));
-    un_der(:,k)=basisDer_1d(Ord,qpt(k));
-    mu_un(:,1)=mu_un(:,1)+qwt(k)*un(:,k);
+    un(:,k)        = basis_1d( Ord,qpt(k) );
+    un_der(:,k) = basisDer_1d( Ord,qpt(k) );
+    mu_un(:,1) = mu_un(:,1) + qwt(k)*un(:,k);
 end
 
-Mmat=zeros(elm_size,elm_size,Nelm);
-Pmat=zeros(elm_size,elm_size,Nelm);
-mu_Mmat=zeros(elm_size,elm_size,Nelm,Nelm);
+Mmat = zeros(elm_size,elm_size,Nelm);
+Pmat = zeros(elm_size,elm_size,Nelm);
+mu_Mmat = zeros(elm_size,elm_size,Nelm,Nelm);
 
 for ne=1:Nelm
     Joca=(x(ne+1)-x(ne))/2;
@@ -52,39 +55,22 @@ for neI=1:Nelm
         end
     end
 end
-%imply the periodic boundary condition to get the neighbourhood.
-nei=zeros(Nelm,2);
-for ne=1:Nelm
-    if ne==1
-        nei(ne,1)=Nelm;
-        nei(ne,2)=2;
-    elseif ne==Nelm
-        nei(ne,1)=Nelm-1;
-        nei(ne,2)=1;
-    else
-        nei(ne,1)=ne-1;
-        nei(ne,2)=ne+1;
-    end
-end
 
-% Matrix fomulated by the numerical flux, they are different from the
-% choice of the flux
-
+% uf(:,1) is the basis function on the left  surface of the cell.
+% uf(:,2) is the basis function on the right surface of the cell.
 uf=zeros(elm_size,2);
 uf(:,1)=basis_1d(Ord,-1);
 uf(:,2)=basis_1d(Ord,1);
 
-UFmat=zeros(elm_size,elm_size,2,Nelm); %uh takes plus
-RFmat=zeros(elm_size,elm_size,2,Nelm);  %rh takes minus
+Fmat = zeros( elm_size,elm_size,2,2,Nelm );
 
-for ne=1:Nelm
-    for j=1:elm_size
-        for i=1:elm_size
-            UFmat(i,j,1,ne)=uf(i,1)*uf(j,1);
-            UFmat(i,j,2,ne)=uf(i,2)*uf(j,1);
-            
-            RFmat(i,j,1,ne)=uf(i,1)*uf(j,2);
-            RFmat(i,j,2,ne)=uf(i,2)*uf(j,2);
+for ne = 1:Nelm
+    for j = 1:elm_size
+        for i = 1:elm_size
+            Fmat(i,j,1,1,ne) = uf(i,1)*uf(j,1);
+            Fmat(i,j,1,2,ne) = uf(i,1)*uf(j,2);
+            Fmat(i,j,2,1,ne) = uf(i,2)*uf(j,1);
+            Fmat(i,j,2,2,ne) = uf(i,2)*uf(j,2);  
         end
     end
 end

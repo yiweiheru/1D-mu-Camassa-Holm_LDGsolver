@@ -6,7 +6,6 @@ ord_num=3;
 ir_num=3;
 cfl=0.1;
 
-
 L2_ErrorStore = [ ];
 muH1_ErrorStore=[ ];
 T_point = [ ];
