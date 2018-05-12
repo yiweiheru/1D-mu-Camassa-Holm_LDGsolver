@@ -8,11 +8,11 @@ fig_Ey_at_time = 0:0.5:(Tfinal);
 ord_num = 2;
 ir_num = 4;
 
-n_RK  = 4;
+n_RK  = 3;
 cfl = 0.1;
 period = 1; 
 
-peak_type = 2;
+peak_type = 3;
 
 P0 = zeros(peak_type,1);
 Q0 = zeros(peak_type,1);
@@ -23,8 +23,8 @@ switch peak_type
         P0(1) = 0.1;      Q0(1) = 0.2;
         P0(2) = 0.08;     Q0(2) = 0.1;
     case 3
-        P0(1) = 0.1;      Q0(1) = 0.2;
-        P0(2) = 0.08;     Q0(2) = 0.1;
+        P0(1) = 0.1;      Q0(1) = 0.5;
+        P0(2) = 0.08;     Q0(2) = 0.2;
         P0(3) = 0.12;     Q0(3) = 0.05;
 end
 
